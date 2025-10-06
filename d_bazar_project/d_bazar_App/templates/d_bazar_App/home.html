@@ -1,0 +1,389 @@
+{% extends 'd_bazar_app/base.html' %}
+{% load static %}
+{% block title %}
+Home-D bazar
+{%endblock%}
+
+{%block page %}
+<style>
+    .hero-section {
+        position: relative;
+        min-height: calc(100vh - 60px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 1em;
+        color: white;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0d324d, #7f5a83, #008080, #2c3e50);
+        background-size: 400% 400%;
+        z-index: -1;
+        animation: gradient-flow 15s ease infinite;
+    }
+
+    @keyframes gradient-flow {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .hero-content {
+        width: 50%;
+        animation: fade-in-up 1.5s ease-out forwards;
+    }
+
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .floating-shapes {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    .floating-shapes .icon-shape {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.2);
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 20px rgba(224, 255, 255, 0.2);
+        animation-name: float;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+    }
+
+    .icon1 { font-size: 5rem; bottom: 10%; left: 15%; animation-duration: 35s; }
+    .icon2 { font-size: 7rem; bottom: 40%; left: 50%; animation-duration: 28s; animation-delay: 3s; animation-name: float-reverse; }
+    .icon3 { font-size: 3rem; top: 20%; left: 80%; animation-duration: 22s; animation-delay: 1s; }
+    .icon4 { font-size: 8rem; top: 15%; left: 5%; animation-duration: 40s; animation-delay: 5s; animation-name: float-reverse; }
+    .icon5 { font-size: 4rem; bottom: 5%; right: 10%; animation-duration: 25s; animation-delay: 2s; }
+
+    @keyframes float {
+        0% {
+            transform: translateY(0) rotate(0deg);
+        }
+        25% {
+            transform: translateY(-20px) translateX(15px) rotate(90deg);
+        }
+        50% {
+            transform: translateY(10px) translateX(-10px) rotate(180deg);
+        }
+        75% {
+            transform: translateY(-15px) translateX(20px) rotate(270deg);
+        }
+        100% {
+            transform: translateY(0) rotate(360deg);
+        }
+    }
+
+    @keyframes float-reverse {
+        0% {
+            transform: translateY(0) rotate(0deg);
+        }
+        25% {
+            transform: translateY(15px) translateX(-20px) rotate(-90deg);
+        }
+        50% {
+            transform: translateY(-10px) translateX(10px) rotate(-180deg);
+        }
+        100% {
+            transform: translateY(0) rotate(-360deg);
+        }
+    }
+
+    .hero-content h1 {
+        font-size: 4rem;
+        font-weight: 700;
+        
+    }
+    #hero_section_list{
+        background: rgba(255, 255, 255, 0.30);
+        color: rgb(255, 255, 255);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 20px rgba(224, 255, 255, 0.2);
+        background: linear-gradient(200deg, rgba(216, 46, 74, 0.08) 20%, rgba(0, 0, 0, 0.08) 80%);
+
+        width: 27%;
+        ul {
+            text-align: start;
+            li{
+                margin: 1em 0;
+            }
+            
+        }
+    }
+    .card-header{
+       
+        height: 6em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    @media(max-width: 990px){
+        .hero-content{
+            width: 65%;
+        }
+    }
+    @media(max-width: 770px){
+        .hero-section{
+            flex-direction: column;
+            gap: 1em;
+            padding: 1em 0;
+        }
+        .hero-content h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+        }
+        #hero_section_list{
+            width: 70%;
+            ul {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2em;
+                
+            }
+        }
+        .card-header{
+            height: 6em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    @media(max-width: 700px){
+        .hero-content{
+            width: 95%;
+        }
+        .hero-content h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+    }
+    @media(max-width: 480px){
+        #hero_section_list{
+            width: 85%;
+            ul {
+                gap: 1em;
+            }
+        }
+        .card-header{
+            height: 6em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    @media(max-width: 380px){
+        #hero_section_list{
+            width: 92%;
+        }
+        .hero-content h1 {
+            font-size: 2.5rem;
+            font-weight: 650;
+        }
+        .hero-content p{
+            font-size: large;
+         }
+        .card-header{
+            height: 6em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    @media(max-width: 325px){
+        .hero-content{
+            width: 97%;
+        }
+        .hero-content h1 {
+
+        }
+    }
+</style>
+
+{#start#}
+<div class="hero-section">
+    <div class="floating-shapes">
+        <div class="icon-shape icon1"><i class="fas fa-book"></i></div>
+        <div class="icon-shape icon2"><i class="fas fa-code"></i></div>
+        <div class="icon-shape icon3"><i class="fas fa-music"></i></div>
+        <div class="icon-shape icon4"><i class="fas fa-image"></i></div>
+        <div class="icon-shape icon5"><i class="fas fa-cloud-download-alt"></i></div>
+    </div>
+    <div class="hero-content">
+        <h1 class="display-3">Future-Forward Digital Assets</h1>
+        <p class="lead col-lg-8 mx-auto">The best products, curated for you. Unbeatable prices and unmatched quality, all in one place.</p>
+        <a href="#" class="btn btn-primary btn-lg mt-3">Shop Now &nbsp;<i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="card" style="border-radius: 30px;" id="hero_section_list">
+        <div class="card-header">
+            <h2>Featured</h2>
+        </div>
+        <ul type="dics">
+            <li class="list-group-item">An item</li>
+            <li class="list-group-item">A second item</li>
+            <li class="list-group-item">A third item</li>
+            <li class="list-group-item">A second item</li>
+            <li class="list-group-item">A third item</li>
+            <li class="list-group-item">A second item</li>
+            <li class="list-group-item">A third item</li>
+            <li class="list-group-item">A third item</li>
+        </ul>
+    </div>
+</div>
+<style>
+    .heading{
+        margin: 3em 0;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.542);
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 20px rgba(224, 255, 255, 0.2);
+    }
+    .home_grid_product{
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        backdrop-filter: blur(6px);
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: 94%;
+        margin: 2em auto;
+        padding: 2em 1em;
+        border: 1px solid rgba(220, 220, 220, 0.2);
+        border-radius: 10px;
+        gap: 3em;
+        li {
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+        li .card:hover {
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.28);
+            transform: translateY(-6px) scale(1.03);
+        }
+        li .card {
+            background: linear-gradient(120deg, #232526 60%, #7f5a83 100%);
+            color: #f8fafd;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px 0 rgba(31, 38, 135, 0.10);
+            border: none;
+            .product_card_header{
+                display: flex;
+                justify-content: space-between;
+                .product_pricing{
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5em;
+
+                }
+            }
+            .product_buttons{
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+    }
+    @media(min-width: 1600px){
+        .home_grid_product{
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    @media(max-width: 1300px){
+        .home_grid_product{
+            gap: 2em;
+            margin: 1.5em auto;
+        }
+    }
+    @media(max-width: 1200px){
+        .home_grid_product{
+            margin: 1em auto;
+        }
+    }
+    @media(max-width: 1024px){
+        .home_grid_product{
+            gap: 1.5em;
+            margin: 1em auto;
+        }
+    }
+    @media(max-width: 990px){
+        .home_grid_product{
+            grid-template-columns: repeat(2, 1fr);
+            width: 90%;
+            gap: 2em;
+            margin: 1em auto;
+        }
+    }
+    @media(max-width: 770px){
+        .home_grid_product{
+            grid-template-columns: repeat(2, 1fr);
+            width: 95%;
+        }
+    }
+    @media(max-width: 485px){
+        .home_grid_product{
+            grid-template-columns: repeat(1, 1fr);
+            width: 95%;
+        }
+    }
+    @media(max-width: 380px){
+        .home_grid_product{
+            padding: 1em 0.5em;
+            width: 96%;
+        }
+    }
+</style>
+<div class="heading">
+    <h1>Products</h1>
+</div>
+<ul type="none" class="home_grid_product">
+    {% for row in web.db %}
+    <li>
+        <div class="card" style="width: 95%;">
+            {%if row.special %}
+                <span class="badge rounded-pill text-bg-light"style="width: 10em; margin:0.5em;" ><i class="fa-solid fa-bullhorn"></i> {{row.special}}</span>
+            {%endif%}
+            <img src="{% static 'images/logo.png' %}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <div class="product_card_header">
+                    <h5 class="card-title">{{row.title}}</h5>
+                    <div class="product_pricing">
+                        <h4>₹{{row.price}}/-</h4>
+                        <span style="text-decoration:line-through; color:rgb(161, 158, 158);">₹{{row.amount}}/-</span>
+                    </div>
+                </div>
+                <p class="card-text">{{row.description}}</p>
+                <div class="product_buttons">
+                    <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-plus"></i> Add to cart</a>
+                    <a href="#" class="btn btn-primary"><i class="far fa-bookmark"></i> Buy now</a>
+                </div>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+{# start #}
