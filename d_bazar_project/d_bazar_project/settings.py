@@ -25,7 +25,7 @@ SECRET_KEY = 'my_name_is_venkates'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['d-bazar.onrender.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
