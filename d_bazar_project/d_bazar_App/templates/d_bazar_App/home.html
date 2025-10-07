@@ -5,7 +5,7 @@ Home-D bazar
 {%endblock%}
 
 {%block page %}
-<style>
+<style id="hero-section">
     .hero-section {
         position: relative;
         min-height: calc(100vh - 60px);
@@ -256,7 +256,7 @@ Home-D bazar
         </ul>
     </div>
 </div>
-<style>
+<style id="product card">
     .heading{
         margin: 3em 0;
         text-align: center;
@@ -291,19 +291,50 @@ Home-D bazar
             border-radius: 12px;
             box-shadow: 0 2px 12px 0 rgba(31, 38, 135, 0.10);
             border: none;
+            .product_details{
+                max-height: 9em;
+                height: 9em;
+                overflow: auto;
+                scrollbar-width: thin; 
+                scrollbar-color: rgba(127, 90, 131, 0.5) transparent; 
+            }
+            .product_details::-webkit-scrollbar {
+                width: 6px;
+            }
+            .product_details::-webkit-scrollbar-track {
+                background: transparent; 
+            }
+            .product_details::-webkit-scrollbar-thumb {
+                background-color: rgba(127, 90, 131, 0.3); 
+                border-radius: 10px;
+            }
+            .product_details::-webkit-scrollbar-thumb:hover {
+                background-color: rgba(127, 90, 131, 0.6); 
+            }
+            .product_img{
+                max-height: 20em;
+                overflow: hidden;
+                background: #000;
+            }
             .product_card_header{
                 display: flex;
                 justify-content: space-between;
+                align-items: center;
                 .product_pricing{
                     display: flex;
                     align-items: center;
+                    justify-content: center;
                     gap: 0.5em;
 
                 }
             }
+            .product_des{
+               
+            }
             .product_buttons{
                 display: flex;
                 justify-content: space-between;
+                padding: 0.8em 1em;
             }
         }
     }
@@ -355,31 +386,43 @@ Home-D bazar
             width: 96%;
         }
     }
+    @media(max-width: 325px){
+        .home_grid_product{
+            padding: 0.5em 0em;
+            width: 98%;
+            .product_card_header{
+                font-size: small;
+            }
+            .product_pricing{
+                font-size: small;
+            }
+        }
+    }
 </style>
 <div class="heading">
     <h1>Products</h1>
 </div>
 <ul type="none" class="home_grid_product">
-    {% for row in web.db %}
+    {% for row in web.items_sorted %}
     <li>
         <div class="card" style="width: 95%;">
             {%if row.special %}
-                <span class="badge rounded-pill text-bg-light"style="width: 10em; margin:0.5em;" ><i class="fa-solid fa-bullhorn"></i> {{row.special}}</span>
+                <span class="badge rounded-pill text-bg-info"style="width: max-content; margin:0.5em;position: absolute;" ><i class="fa-solid fa-bullhorn"></i> {{row.special}}</span>
             {%endif%}
-            <img src="{% static 'images/logo.png' %}" class="card-img-top" alt="...">
-            <div class="card-body">
+            <img src="{% static 'images/logo.png' %}" class="card-img-top product_img" alt="..." >
+            <div class="card-body product_details">
                 <div class="product_card_header">
                     <h5 class="card-title">{{row.title}}</h5>
                     <div class="product_pricing">
-                        <h4>₹{{row.price}}/-</h4>
-                        <span style="text-decoration:line-through; color:rgb(161, 158, 158);">₹{{row.amount}}/-</span>
+                        <h5>₹{{row.price}}/-</h5>
+                        <span style="text-decoration:line-through; color:rgb(161, 158, 158);">₹{{row.amount}}</span>
                     </div>
                 </div>
-                <p class="card-text">{{row.description}}</p>
-                <div class="product_buttons">
-                    <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-plus"></i> Add to cart</a>
-                    <a href="#" class="btn btn-primary"><i class="far fa-bookmark"></i> Buy now</a>
-                </div>
+                <p class="card-text product_des">{{row.description}}</p>
+            </div>
+            <div class="product_buttons">
+                <a href="#" class="btn btn-primary"><i class="fa-solid fa-cart-plus"></i> Add to cart</a>
+                <a href="#" class="btn btn-primary"><i class="far fa-bookmark"></i> Buy now</a>
             </div>
         </div>
     </li>
