@@ -1,0 +1,13 @@
+databases:
+  - name: d-bazar-db
+    databaseName: d_bazar_db
+    user: d_bazar_user
+    plan: free
+
+services:
+  - type: web
+    name: d-bazar
+    env: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn d_bazar_project.wsgi:application"

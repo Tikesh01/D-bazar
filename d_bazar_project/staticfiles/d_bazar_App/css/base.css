@@ -1,0 +1,119 @@
+body {
+    background-color: #0d1117; /* A dark background that complements the hero */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+}
+
+.navbar {
+    padding: 0.2em 2em;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+    --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+.navbar.scrolled {
+    background-color: rgba(13, 32, 49, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.2s;
+}
+
+.navbar .nav-link:hover, .navbar .nav-link.active {
+    color: white;
+}
+
+.container-fluid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    --bs-navbar-brand-hover-color: white;
+}
+
+.navButton {
+    border-radius: 8px;
+    margin: 0 1em;
+    background: transparent;
+    border: 1px solid rgba(127, 90, 131, 0.8); /* Color from hero gradient */
+    color: white;
+    padding: 0.5em 1em;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.navButton:hover {
+    background-color: rgba(127, 90, 131, 0.3);
+    box-shadow: 0 0 15px rgba(127, 90, 131, 0.5);
+}
+
+#brandname {
+    margin-right: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7em;
+}
+#main{
+    min-height: 100vh;
+    margin-top: 80px;
+}
+
+footer {
+    background-color: #0d1117;
+    color: rgba(255, 255, 255, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+footer h5 {
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+footer .text-body {
+    color: rgba(255, 255, 255, 0.7) !important;
+    transition: color 0.2s;
+}
+
+@media(max-width: 990px) {
+    .navButton {
+        margin: 0.5em 1em;
+    }
+    .navbar.scrolled {
+        overflow-y: auto;
+        max-height: 100vh; 
+        white-space: normal;
+    }
+}
+
+@media(max-width: 430px) {
+    .navbar {
+        padding: 0 0.5em;
+    }
+    #main{
+        margin-top: 70px;
+    }
+}
+
+@media(min-width: 991px) {
+    #navDropdown {
+        width: 320px;
+    }
+    .navbar {
+        background-color: rgba(13, 32, 49, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+}
+
+.dropdown-menu {
+    --bs-dropdown-bg: #161b22;
+    --bs-dropdown-link-color: #c9d1d9;
+    --bs-dropdown-link-hover-color: #ffffff;
+    --bs-dropdown-link-hover-bg: rgba(139, 148, 158, 0.1);
+    --bs-dropdown-border-color: rgba(255, 255, 255, 0.15);
+    --bs-form-label-color: #c9d1d9;
+    --bs-body-color: #c9d1d9;
+    --bs-form-input-color: #4b6076;
+}
