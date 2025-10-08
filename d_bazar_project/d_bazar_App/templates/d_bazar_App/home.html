@@ -408,7 +408,7 @@ Home-D bazar
             {%if row.special %}
                 <span class="badge rounded-pill text-bg-info"style="width: max-content; margin:0.5em;position: absolute;" ><i class="fa-solid fa-bullhorn"></i> {{row.special}}</span>
             {%endif%}
-            <img src="{% static 'images/logo.png' %}" class="card-img-top product_img" alt="..." >
+            <img src="{{ item.image.url }}" class="card-img-top product_img" alt="{{ item.title }}">
             <div class="card-body product_details">
                 <div class="product_card_header">
                     <h5 class="card-title">{{row.title}}</h5>
