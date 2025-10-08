@@ -27,6 +27,15 @@
             padding: 1em;
         }
     }
+    .cell-content {
+        max-height: 3em; /* Adjust as needed */
+        overflow-y: auto;
+    
+        scrollbar-width: thin;
+    }
+    .cell-content.img{
+        max-width: 7em;
+    }
 </style>
 <body>
     {% if messages %}
@@ -72,12 +81,11 @@
     </nav>
 
     <main id="main_adminpage">
-       
-        <fieldset class="containers" id="database">
-            <legend class="container_header">
+        <div class="containers" id="database">
+            <div class="container_header">
                  <h2>Items</h2>
-            </legend>
-            <table class="table table-striped" >
+            </div>
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th scope="col">Position</th>
@@ -93,13 +101,13 @@
                 <tbody>
                     {% for row in web.items %}
                     <tr>
-                        <th>{{row.pos}}</th>
-                        <td>{{row.image}}</td>
-                        <td>{{row.title}}</td>
-                        <td>{{row.description}}</td>
-                        <td>₹{{row.price}}</td>
-                        <td>₹{{row.amount}}</td>
-                        <td>{{row.special}}</td>
+                        <th><div class="cell-content">{{row.pos}}</div></th>
+                        <td><div class="cell-content img">{{row.image}}</div></td>
+                        <td><div class="cell-content">{{row.title}}</div></td>
+                        <td><div class="cell-content">{{row.description}}</div></td>
+                        <td><div class="cell-content">₹{{row.price}}</div></td>
+                        <td><div class="cell-content">₹{{row.amount}}</div></td>
+                        <td><div class="cell-content">{{row.special}}</div></td>
                         <td style="display: flex; gap:0.5em;">
                             <div class="btn-group dropstart">
                                 <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
@@ -148,42 +156,43 @@
                         </td>
                     </tr>
                     {% endfor %}
+                        {% csrf_token %}
                     <form action="{% url 'add_items' %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <tr>
                             <th scope="row">
                                 <div class="input-group input-group-sm ">
-                                    <input type="number" name="pos" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="Position" style="width: 4em;" required a>
+                                    <input type="number" name="pos" class="form-control" aria-label="Position" placeholder="Position" style="width: 4em;" required >
                                 </div>
                             </th>
                             <td>
                                 <div class="input-group input-group-sm"> 
-                                    <input type="file" name="image" accept=".png, .jpg, .jpeg" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" style="width: 10em;" placeholder="Image" required>
+                                    <input type="file" name="image" accept=".png, .jpg, .jpeg" class="form-control" aria-label="Image" style="width: 10em;" required>
                                 </div>
                             </td>
                             <td>
                                 <div class="input-group input-group-sm">
-                                    <input type="text" name="title" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="e.g., WebDev Bundle!" required>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group">
-                                    <textarea name="description" class="form-control" aria-label="With textarea" rows="1" placeholder="Description" required ></textarea>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group input-group-sm ">
-                                    <input type="number" name="price" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="e.g., 499"  required style="width: 5em;">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="input-group input-group-sm ">
-                                    <input type="number" name="amount" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="e.g., 999" style="width: 5em;" required>
+                                    <input type="text" name="title" class="form-control" aria-label="Title" placeholder="e.g., WebDev Bundle!" required>
                                 </div>
                             </td>
                             <td>
                                 <div class="input-group input-group-sm">
-                                    <input type="text" name="special" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="e.g., Extra 10% off!" >
+                                    <textarea name="description" class="form-control" aria-label="Description" rows="1" placeholder="Description" required ></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm ">
+                                    <input type="number" name="price" class="form-control" aria-label="Price" placeholder="e.g., 499"  required style="width: 5em;">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm ">
+                                    <input type="number" name="amount" class="form-control" aria-label="Amount" placeholder="e.g., 999" style="width: 5em;" required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" name="special" class="form-control" aria-label="Special" placeholder="e.g., Extra 10% off!" >
                                 </div>
                             </td>
                             <td>
@@ -193,7 +202,7 @@
                     </form>
                 </tbody>
             </table>
-        </fieldset>
+        </div>
         <fieldset class="containers" id="database">
             <legend class="container_header">
                 <h2>Users</h2>

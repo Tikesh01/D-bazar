@@ -13,7 +13,7 @@
         body {
             background-color: #0d1117; /* A dark background that complements the hero */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            
+             
         }
 
         .navbar {
@@ -146,15 +146,16 @@
                         <a class="nav-link dropdown-toggle-primary navButton" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-sign-in-alt"></i>&nbsp;&nbsp;Sign-In
                         </a>
-                        <div class="dropdown-menu" id="navDropdown" id="signinFormCont" >
-                            <form class="px-4 py-3">
+                        <div class="dropdown-menu" id="navDropdown">
+                            <form class="px-4 py-3" action="{% url 'handlelogin' %}" method="POST">
+                                {% csrf_token %}
                                 <div class="mb-3">
                                     <label for="exampleDropdownFormEmail1" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com">
+                                    <input type="email" name="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleDropdownFormPassword1" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password">
+                                    <input type="password" name="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password">
                                 </div>
                                 <div class="mb-3">
                                     <div class="form-check">
@@ -164,7 +165,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Sign in</button>
+                                <button type="submit"  class="btn btn-primary">Sign in</button>
                             </form>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="">New around here? Sign up</a>
@@ -175,34 +176,34 @@
                         <a class="nav-link dropdown-toggle-primary navButton" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user-plus"></i>&nbsp;&nbsp;Sign Up
                         </a>
-                        <div class="dropdown-menu" id="navDropdown" id="signupFormCont" >
-                            <form class="px-4 py-3">
+                        <div class="dropdown-menu" id="navDropdown">
+                            <form class="px-4 py-3" id="signupForm" action="{% url 'signup' %}" method="POST">
+                                {% csrf_token %}
                                 <div class="mb-3">
                                     <label for="exampleDropdownFormEmail1" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com">
+                                    <input type="email" name="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleDropdownFormPassword1" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password">
+                                    <input type="password" name="pass1" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleDropdownFormPassword12" class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-control" id="exampleDropdownFormPassword2" placeholder="Confirm Password">
+                                    <input type="password" name="pass2" class="form-control" id="exampleDropdownFormPassword2" placeholder="Confirm Password">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleDropdownFormPassword12" class="form-label">Mobile Number</label>
-                                    <input type="number" class="form-control" id="exampleDropdownFormMobile" placeholder="Mobile number ">
+                                    <input type="number" name="mobile" class="form-control" id="exampleDropdownFormMobile" placeholder="Mobile number ">
                                 </div>
                                 <button type="submit" class="btn btn-primary">Sign Up</button>
                             </form>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Already Have an Account? Sign in</a>
-                        </div>
-                        <div class="dropdown-menu" id="otpFormCont" >
-                            <form class="px-4 py-3">
+                            <form class="px-4 py-3 d-none" id="otpForm" action="{% url 'verify_otp' %}" method="POST">
+                                {% csrf_token %}
+                                <p>An OTP has been sent. Please check and enter it below.</p>
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="OTP" aria-label="Recipient’s username" aria-describedby="button-addon2">
-                                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+                                    <input type="text" name="otp" class="form-control" placeholder="Enter OTP" required>
+                                    <button class="btn btn-outline-primary" type="submit" id="button-addon2">Verify</button>
                                 </div>
                             </form>
                         </div>
@@ -267,6 +268,23 @@
     const nav = document.querySelector('.navbar');
     window.addEventListener('scroll', () => {
         nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Logic to show OTP form
+    document.addEventListener('DOMContentLoaded', function() {
+        const signupForm = document.getElementById('signupForm');
+        const otpForm = document.getElementById('otpForm');
+        
+        // Check if we should show the OTP form on page load
+        // This happens when the signup view redirects back with a success message
+        {% if messages %}
+            {% for message in messages %}
+                {% if 'An OTP has been sent' in message|escape %}
+                    signupForm.classList.add('d-none');
+                    otpForm.classList.remove('d-none');
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     });
 </script>
 </html>

@@ -1,11 +1,14 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
-from .models import Item
+from .models import Item, User
 from django.views.decorators.http import require_http_methods
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import authenticate, login, logout, get_user_model
+import random
 
 import os
-# Create your views here.
+
+User = get_user_model()
 
 class web:
     def __init__(self):
@@ -20,6 +23,86 @@ context = {'web':w}
 def home(request):
     return render(request,'d_bazar_App/home.html', context)
 
+def signup(request):
+    if request.method == "POST":
+        mobile = request.POST.get('mobile')
+        email = request.POST.get('email')
+        pass1 = request.POST.get('pass1')
+        pass2 = request.POST.get('pass2')
+
+
+        username = email 
+
+        if pass1 != pass2:
+            messages.error(request, "Passwords do not match")
+            return redirect('home')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists")
+            return redirect('home')
+
+        # Generate OTP
+        otp = str(random.randint(100000, 999999))
+        print(f"Generated OTP for {email}: {otp}") 
+
+        # Create inactive user
+        myuser = User.objects.create_user(username=username, email=email, password=pass1)
+        myuser.mobile_number = mobile
+        myuser.otp = otp
+        myuser.is_active = False
+        myuser.save()
+
+        # Store email in session to know who is verifying
+        request.session['signup_email'] = email
+
+        messages.success(request, "An OTP has been sent to your email. Please verify.")
+        return redirect('home') # Redirect and show OTP form via JS
+
+    else:
+        return HttpResponse("404 - Not Found")
+
+def verify_otp(request):
+    if request.method == "POST":
+        otp = request.POST.get('otp')
+        email = request.session.get('signup_email')
+        if not email:
+            messages.error(request, "Session expired. Please sign up again.")
+            return redirect('home')
+
+        try:
+            user = User.objects.get(email=email)
+            if user.otp == otp:
+                user.is_active = True
+                user.otp = None # Clear OTP
+                user.save()
+                del request.session['signup_email']
+                messages.success(request, "Account verified successfully! You can now log in.")
+            else:
+                messages.error(request, "Invalid OTP.")
+        except User.DoesNotExist:
+            messages.error(request, "User not found. Please sign up again.")
+        return redirect('home')
+    return HttpResponse("404 - Not Found")
+
+def handlelogin(request):
+    if request.method == 'POST':
+        loginemail = request.POST.get('email')
+        loginpass = request.POST.get('password')
+        user = authenticate(request, email=loginemail, password=loginpass)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Successfully Logged In")
+            return redirect('home')
+        else:
+            messages.error(request, "Invalid Credentials")
+            return redirect('home')
+    return HttpResponse("404- Not Found")
+
+def handlelogout(request):
+    logout(request)
+    messages.success(request, "Successfully Logged Out")
+    return redirect('home')
+
 def admin(request):
     return render(request,'d_bazar_App/admin.html', context)
 
@@ -33,7 +116,7 @@ def add_items(request):
             description=request.POST.get('description'),
             price=request.POST.get('price'),
             amount=request.POST.get('amount'),
-            special=request.POST.get('special') or None # Handle empty string for optional field
+            special=request.POST.get('special') or None 
         )
         w.items = Item.objects.all()
         messages.success(request,'Item added successfuly!')
@@ -96,5 +179,3 @@ def render_page(request, name):
         return render(request, template_path)
     except:
         return redirect('home')
-
-
