@@ -33,8 +33,8 @@ body {
 }
 
 .navButton {
-    border-radius: 8px;
     margin: 0 1em;
+    border-radius: 8px;
     background: transparent;
     border: 1px solid rgba(127, 90, 131, 0.8); /* Color from hero gradient */
     color: white;
@@ -75,7 +75,11 @@ footer .text-body {
     color: rgba(255, 255, 255, 0.7) !important;
     transition: color 0.2s;
 }
-
+@media(max-width: 1030px) {
+    .navbar {
+        padding: 0.2em 1em;
+    }
+}
 @media(max-width: 990px) {
     .navButton {
         margin: 0.5em 1em;
@@ -105,8 +109,4 @@ footer .text-body {
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
     }
-}
-
-.dropdown-menu {
-    --bs-dropdown-bg: #161b22;
 }

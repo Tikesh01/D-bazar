@@ -106,7 +106,3 @@ footer .text-body {
         -webkit-backdrop-filter: blur(10px);
     }
 }
-
-.dropdown-menu {
-    --bs-dropdown-bg: #161b22;
-}

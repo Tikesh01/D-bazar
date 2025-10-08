@@ -127,7 +127,6 @@ Home-D bazar
         color: rgb(255, 255, 255);
         box-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 20px rgba(224, 255, 255, 0.2);
         background: linear-gradient(200deg, rgba(216, 46, 74, 0.08) 20%, rgba(0, 0, 0, 0.08) 80%);
-
         width: 27%;
         ul {
             text-align: start;
@@ -165,7 +164,9 @@ Home-D bazar
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 2em;
-                
+                li{
+                    margin: 0 0;
+                }
             }
         }
         .card-header{
@@ -219,9 +220,6 @@ Home-D bazar
     @media(max-width: 325px){
         .hero-content{
             width: 97%;
-        }
-        .hero-content h1 {
-
         }
     }
 </style>
@@ -318,13 +316,25 @@ Home-D bazar
             .product_card_header{
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-items: flex-start; 
+                padding-bottom: 0.3em;
+                margin-bottom: 0.3em;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
                 .product_pricing{
                     display: flex;
+                    flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    gap: 0.5em;
-
+                    gap: 0em;
+                    span{
+                        font-size: 12px;
+                    }
+                }
+                .card-title {
+                    color: #f8fafd; 
+                }
+                .product_pricing h5 {
+                    color: #39CCCC; 
                 }
             }
             .product_des{
@@ -401,18 +411,18 @@ Home-D bazar
 <div class="heading">
     <h1>Products</h1>
 </div>
-<ul type="none" class="home_grid_product">
+<ul type="none" class="home_grid_product home_conatainer" id="products_section">
     {% for row in web.items_sorted %}
     <li>
         <div class="card" style="width: 95%;">
             {%if row.special %}
                 <span class="badge rounded-pill text-bg-info"style="width: max-content; margin:0.5em;position: absolute;" ><i class="fa-solid fa-bullhorn"></i> {{row.special}}</span>
             {%endif%}
-            <img src="{{ item.image.url }}" class="card-img-top product_img" alt="{{ item.title }}">
+            <img src="{{ row.image.url }}" class="card-img-top product_img" alt="{{ row.title }}">
             <div class="card-body product_details">
                 <div class="product_card_header">
                     <h5 class="card-title">{{row.title}}</h5>
-                    <div class="product_pricing">
+                    <div class="product_pricing text-end">
                         <h5>₹{{row.price}}/-</h5>
                         <span style="text-decoration:line-through; color:rgb(161, 158, 158);">₹{{row.amount}}</span>
                     </div>
@@ -424,8 +434,46 @@ Home-D bazar
                 <a href="#" class="btn btn-primary"><i class="far fa-bookmark"></i> Buy now</a>
             </div>
         </div>
+       
     </li>
     {% endfor %}
 </ul>
+
+<div class="heading">
+    <h1>About</h1>
+</div>
+<div class="about home_container" id="about_section">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="display-5 fw-bold">Welcome to D-Bazar</h2>
+                <p class="lead text-white-50">Your ultimate destination for premium digital assets. We believe in empowering creators, entrepreneurs, and innovators by providing a vast and meticulously curated collection of digital products.</p>
+                <p class="text-white-50">Our mission is to provide high-quality, ready-to-use digital assets at unbeatable prices. We understand the fast-paced digital world and the need for resources that are not only top-notch but also instantly accessible. Whether you're building a website, launching a marketing campaign, or exploring a new creative project, D-Bazar is here to fuel your success.</p>
+            </div>
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 text-white" style="background: linear-gradient(145deg, #2c3e50, #4a5568); border-radius: 15px;">
+                            <div class="card-body text-center">
+                                <i class="fas fa-rocket fa-3x mb-3 text-info"></i>
+                                <h5 class="card-title">Instant Access</h5>
+                                <p class="card-text">Get your products immediately after purchase. No waiting, no hassle.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 text-white" style="background: linear-gradient(145deg, #2c3e50, #4a5568); border-radius: 15px;">
+                            <div class="card-body text-center">
+                                <i class="fas fa-infinity fa-3x mb-3 text-info"></i>
+                                <h5 class="card-title">Lifetime Updates</h5>
+                                <p class="card-text">Buy once and receive all future updates for a lifetime, free of charge.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 {# start #}
