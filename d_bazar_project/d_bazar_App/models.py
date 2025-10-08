@@ -4,7 +4,7 @@ from django.db import models
 
 class Item(models.Model):
     pos  = models.IntegerField()
-    image = models.ImageField()
+    image = models.ImageField(upload_to='product_images/')
     title = models.CharField(max_length=20)
     description = models.TextField()
     price = models.FloatField()
