@@ -7,8 +7,8 @@ class Item(models.Model):
     image = models.ImageField(upload_to='product_images/')
     title = models.CharField(max_length=20)
     description = models.TextField()
-    price = models.FloatField()
-    amount = models.FloatField()
+    price = models.IntegerField()
+    amount = models.IntegerField()
     special = models.CharField(max_length=15, null=True, blank=True)
 
     def __str__(self):
