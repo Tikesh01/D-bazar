@@ -6,7 +6,7 @@ from django.views.static import serve
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('admin', views.admin, name='admin'),
+    path('dashboard', views.admin_dashboard, name='admin_dashboard'),
     path('items/add',views.add_items, name='add_items'),
     path('signup', views.signup, name='signup'),
     path('verify-otp', views.verify_otp, name='verify_otp'),
@@ -14,7 +14,7 @@ urlpatterns = [
     path('logout', views.handlelogout, name='handlelogout'),
     path('items/delete',views.delete_items, name='delete_items'),
     path('items/edit',views.edit_items, name='edit_items'),
-    path('<name>',views.render_page, name='<name>')
+    # path('<name>',views.render_page, name='<name>')
 ]
 
 # Serve static and media files in development

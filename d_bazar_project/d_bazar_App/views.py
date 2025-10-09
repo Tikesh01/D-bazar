@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from .decorators import admin_required
 import random
 
 import os
@@ -42,15 +43,15 @@ def signup(request):
 
         # Validation
         if not all([mobile, email, pass1, pass2]):
-            messages.error(request, "All fields are required")
+            messages.warning(request, "All fields are required")
             return redirect('home')
 
         if pass1 != pass2:
-            messages.error(request, "Passwords do not match")
+            messages.warning(request, "Passwords do not match")
             return redirect('home')
 
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already exists")
+            messages.warning(request, "Email already exists")
             return redirect('home')
 
         # Generate OTP
@@ -61,8 +62,7 @@ def signup(request):
             send_otp_email(email, otp)
             
             # Create inactive user
-            myuser = User.objects.create_user(
-                username=email,  # Using email as username
+            User.objects.create_user(
                 email=email, 
                 password=pass1,
                 mobile_number=mobile,
@@ -72,14 +72,13 @@ def signup(request):
             
             # Store email in session
             request.session['signup_email'] = email
-            request.session['signup_otp'] = otp  # Store in session for verification
 
             messages.success(request, "An OTP has been sent to your email. Please verify.")
             print(f"OTP for {email}: {otp}")  # For debugging
-            return redirect('home')
+            return render(request, "d_bazar_App/otp_verification.html", context)
             
         except Exception as e:
-            messages.error(request, f"We could not send an OTP. Error: {str(e)}")
+            messages.warning(request, f"We could not send an OTP. Error: {str(e)}")
             return redirect('home')
 
     return HttpResponse("404 - Not Found")
@@ -88,33 +87,29 @@ def verify_otp(request):
     if request.method == "POST":
         entered_otp = request.POST.get('otp')
         email = request.session.get('signup_email')
-        stored_otp = request.session.get('signup_otp')
         
         if not email:
-            messages.error(request, "Session expired. Please sign up again.")
+            messages.warning(request, "Session expired. Please sign up again.")
             return redirect('home')
 
         try:
             user = User.objects.get(email=email)
             
             # Check against both session and user OTP
-            if entered_otp == stored_otp or entered_otp == user.otp:
+            if entered_otp == user.otp:
                 user.is_active = True
-                user.otp = None
+                user.otp = "" # Clear OTP after use
                 user.save()
                 
                 # Clean up session
-                if 'signup_email' in request.session:
-                    del request.session['signup_email']
-                if 'signup_otp' in request.session:
-                    del request.session['signup_otp']
+                del request.session['signup_email']
                     
                 messages.success(request, "Account verified successfully! You can now log in.")
             else:
-                messages.error(request, "Invalid OTP.")
+                messages.warning(request, "Invalid OTP.")
                 
         except User.DoesNotExist:
-            messages.error(request, "User not found. Please sign up again.")
+            messages.warning(request, "User not found. Please sign up again.")
             
         return redirect('home')
         
@@ -125,13 +120,21 @@ def handlelogin(request):
         loginemail = request.POST.get('email')
         loginpass = request.POST.get('password')
         user = authenticate(request, email=loginemail, password=loginpass)
+
         if user is not None:
             login(request, user)
-            messages.success(request, "Successfully Logged In")
-            return redirect('home')
+            # Check if the user is a staff member (admin)
+            if user.is_staff:
+                messages.success(request, f"Welcome Admin, {user.email}!")
+                return redirect('admin_dashboard')
+                
+            else:
+                messages.success(request, "Successfully Logged In")
+                return redirect('home')
         else:
-            messages.error(request, "Invalid Credentials")
+            messages.warning(request, "Invalid Credentials")
             return redirect('home')
+
     return HttpResponse("404- Not Found")
 
 def handlelogout(request):
@@ -139,10 +142,12 @@ def handlelogout(request):
     messages.success(request, "Successfully Logged Out")
     return redirect('home')
 
-def admin(request):
+@admin_required
+def admin_dashboard(request):
     return render(request,'d_bazar_App/admin.html', context)
 
 @require_http_methods(["POST"])
+@admin_required
 def add_items(request):
     try:
         Item.objects.create(
@@ -157,10 +162,11 @@ def add_items(request):
         w.items = Item.objects.all()
         messages.success(request,'Item added successfuly!')
     except Exception as e:
-        messages.error(request, f'Failed to add item. Error: {e}')
-    return redirect('admin')
+        messages.warning(request, f'Failed to add item. Error: {e}')
+    return redirect('admin_dashboard')
 
 @require_http_methods(["POST"])
+@admin_required
 def delete_items(request):
     item_id = request.POST.get('item_id')
     if item_id:
@@ -171,14 +177,15 @@ def delete_items(request):
             
             messages.success(request,'Item Deleted successfuly!')
         except ObjectDoesNotExist:
-            messages.error(request, 'Item not found.')
+            messages.warning(request, 'Item not found.')
         except Exception as e:
-            messages.error(request, f'Error deleting item: {e}')
+            messages.warning(request, f'Error deleting item: {e}')
     else:
         messages.error(request, 'No item ID provided.')
-    return redirect('admin')
+    return redirect('admin_dashboard')
 
 @require_http_methods(["POST"])
+@admin_required
 def edit_items(request):
     try:
         item_id =  request.POST.get('item_id')
@@ -199,19 +206,8 @@ def edit_items(request):
         w.items = Item.objects.all()
         messages.success(request,'Item edited successfuly!')
     except ObjectDoesNotExist:
-        messages.error(request, 'Item not found.')
+        messages.warning(request, 'Item not found.')
     except Exception as e:
-        messages.error(request, f'Failed to edit item. Error: {e}')
-    return redirect('admin')
+        messages.warning(request, f'Failed to edit item. Error: {e}')
+    return redirect('admin_dashboard')
         
-def render_page(request, name):
-    if name == 'home':
-        return redirect('home')
-    elif name == 'favicon.ico':
-        return HttpResponse(status=404)
-
-    template_path = f'd_bazar_App/{name}.html'
-    try:
-        return render(request, template_path)
-    except:
-        return redirect('home')
