@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
-# exit on error
-set -o errexit
+# build.sh
 
+echo "Building the project..."
+
+# Install dependencies
 pip install -r requirements.txt
 
-python manage.py collectstatic --no-input
+# Install whitenoise for static files
+pip install whitenoise
+
+# Collect static files
+python manage.py collectstatic --noinput
+
+# Apply database migrations
 python manage.py migrate

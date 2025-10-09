@@ -3,6 +3,8 @@ from django.contrib import messages
 from .models import Item, User
 from django.views.decorators.http import require_http_methods
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout, get_user_model
 import random
 
@@ -20,6 +22,14 @@ class web:
 w = web()
 context = {'web':w}
 
+def send_otp_email(email, otp):
+    """Sends an OTP to the user's email."""
+    subject = 'Your D-Bazar Account Verification Code'
+    message = f'Hi there,\n\nYour One-Time Password (OTP) for account verification is: {otp}\n\nThank you for joining D-Bazar!'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [email]
+    send_mail(subject, message, email_from, recipient_list)
+    
 def home(request):
     return render(request,'d_bazar_App/home.html', context)
 
@@ -30,8 +40,10 @@ def signup(request):
         pass1 = request.POST.get('pass1')
         pass2 = request.POST.get('pass2')
 
-
-        username = email 
+        # Validation
+        if not all([mobile, email, pass1, pass2]):
+            messages.error(request, "All fields are required")
+            return redirect('home')
 
         if pass1 != pass2:
             messages.error(request, "Passwords do not match")
@@ -43,45 +55,69 @@ def signup(request):
 
         # Generate OTP
         otp = str(random.randint(100000, 999999))
-        print(f"Generated OTP for {email}: {otp}") 
+        
+        try:
+            # Send OTP via email
+            send_otp_email(email, otp)
+            
+            # Create inactive user
+            myuser = User.objects.create_user(
+                username=email,  # Using email as username
+                email=email, 
+                password=pass1,
+                mobile_number=mobile,
+                otp=otp,
+                is_active=False
+            )
+            
+            # Store email in session
+            request.session['signup_email'] = email
+            request.session['signup_otp'] = otp  # Store in session for verification
 
-        # Create inactive user
-        myuser = User.objects.create_user(username=username, email=email, password=pass1)
-        myuser.mobile_number = mobile
-        myuser.otp = otp
-        myuser.is_active = False
-        myuser.save()
+            messages.success(request, "An OTP has been sent to your email. Please verify.")
+            print(f"OTP for {email}: {otp}")  # For debugging
+            return redirect('home')
+            
+        except Exception as e:
+            messages.error(request, f"We could not send an OTP. Error: {str(e)}")
+            return redirect('home')
 
-        # Store email in session to know who is verifying
-        request.session['signup_email'] = email
-
-        messages.success(request, "An OTP has been sent to your email. Please verify.")
-        return redirect('home') # Redirect and show OTP form via JS
-
-    else:
-        return HttpResponse("404 - Not Found")
+    return HttpResponse("404 - Not Found")
 
 def verify_otp(request):
     if request.method == "POST":
-        otp = request.POST.get('otp')
+        entered_otp = request.POST.get('otp')
         email = request.session.get('signup_email')
+        stored_otp = request.session.get('signup_otp')
+        
         if not email:
             messages.error(request, "Session expired. Please sign up again.")
             return redirect('home')
 
         try:
             user = User.objects.get(email=email)
-            if user.otp == otp:
+            
+            # Check against both session and user OTP
+            if entered_otp == stored_otp or entered_otp == user.otp:
                 user.is_active = True
-                user.otp = None # Clear OTP
+                user.otp = None
                 user.save()
-                del request.session['signup_email']
+                
+                # Clean up session
+                if 'signup_email' in request.session:
+                    del request.session['signup_email']
+                if 'signup_otp' in request.session:
+                    del request.session['signup_otp']
+                    
                 messages.success(request, "Account verified successfully! You can now log in.")
             else:
                 messages.error(request, "Invalid OTP.")
+                
         except User.DoesNotExist:
             messages.error(request, "User not found. Please sign up again.")
+            
         return redirect('home')
+        
     return HttpResponse("404 - Not Found")
 
 def handlelogin(request):
